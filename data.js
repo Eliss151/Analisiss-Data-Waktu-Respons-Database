@@ -5,7 +5,6 @@
    ===================================================================== */
 
 window.CONFIG = {
-  // ---------- Identitas ----------
   judul: "Analisis Data Waktu Respons Query MySQL, PostgreSQL, dan MongoDB",
   mataKuliah: "Tugas Statistika",
   breadcrumb: "DATALAB / Waktu Respons Database",
