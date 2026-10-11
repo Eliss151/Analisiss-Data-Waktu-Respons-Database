@@ -4,8 +4,8 @@ window.CONFIG = {
   mataKuliah: "Tugas Statistika",
   breadcrumb: "DATALAB / Waktu Respons Database",
   penulis: [
-    " Muhammad Farisi Rasyidi ( 250602043 ) " ,
-    " Elisa Indah R ( 250602061 ) "
+    "Muhammad Farisi Rasyidi (250602043)" ,
+    "Elisa Indah R (250602061)"
   ],
 
   // ---------- Label dan satuan (dipakai di grafik dan tabel) ----------
