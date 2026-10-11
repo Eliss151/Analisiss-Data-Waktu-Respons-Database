@@ -49,6 +49,8 @@
   groups.forEach(function (g, i) { colorOf[g] = PALETTE[i % PALETTE.length]; });
   var state = { filter: null, q: "", sortKey: null, sortDir: "asc", page: 1, pageSize: 6 };
   var charts = {};
+  var DECILES = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+  var PERCENTILES = [1, 5, 10, 25, 50, 75, 90, 95, 99];
 
   function activeGroups() { return state.filter ? [state.filter] : groups; }
   function valuesOf(g) { return D.filter(function (r) { return r.kelompok === g; }).map(function (r) { return r.nilai; }); }
@@ -62,6 +64,8 @@
   $("#temuan").innerHTML = (C.temuan || []).map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
   $("#kesimpulanList").innerHTML = (C.kesimpulan || []).map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
   $("#cap1").textContent = C.labelNilai + " per " + C.labelKategori.toLowerCase() + " (" + C.satuan + ")";
+  $("#cap3").textContent = "Desil D1–D9 (" + C.satuan + ")";
+  $("#cap4").textContent = "Persentil P1–P99 (" + C.satuan + ")";
   $("#logNote").textContent = C.skalaLog ? (C.catatanSkalaLog || "Sumbu y memakai skala logaritmik.") : "";
   $("#thKategori").textContent = C.labelKategori;
   $("#thKelompok").textContent = C.labelKelompok;
@@ -140,6 +144,19 @@
     $("#statTable").innerHTML = h + "</tbody>";
   }
 
+  function renderDpTable() {
+    var gs = activeGroups();
+    var head = "<thead><tr><th>Ukuran</th>" + gs.map(function (g) { return '<th class="num">' + esc(g) + "</th>"; }).join("") + "</tr></thead><tbody>";
+    var body = "";
+    DECILES.forEach(function (p) {
+      body += "<tr><td>Desil " + p / 10 + " (D" + p / 10 + ")</td>" + gs.map(function (g) { return '<td class="num">' + fmt(pct(valuesOf(g), p / 100)) + "</td>"; }).join("") + "</tr>";
+    });
+    PERCENTILES.forEach(function (p) {
+      body += "<tr><td>Persentil " + p + " (P" + p + ")</td>" + gs.map(function (g) { return '<td class="num">' + fmt(pct(valuesOf(g), p / 100)) + "</td>"; }).join("") + "</tr>";
+    });
+    $("#dpTable").innerHTML = head + body + "</tbody>";
+  }
+
   /* ---------- Grafik ---------- */
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
   function logMin() {
@@ -192,6 +209,23 @@
       },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: legend, tooltip: tip }, scales: axes(C.labelNilai + " (" + C.satuan + ")", false) }
     });
+
+    function lineChart(key, canvas, ps, label) {
+      if (charts[key]) charts[key].destroy();
+      charts[key] = new Chart($(canvas), {
+        type: "line",
+        data: {
+          labels: ps.map(label),
+          datasets: gs.map(function (g) {
+            return { label: g, borderColor: colorOf[g], backgroundColor: colorOf[g], tension: 0, borderWidth: 2, pointRadius: 3,
+              data: ps.map(function (p) { return pct(valuesOf(g), p / 100); }) };
+          })
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: legend, tooltip: tip }, scales: axes(C.labelNilai + " (" + C.satuan + ")", !!C.skalaLog) }
+      });
+    }
+    lineChart("c3", "#ch3", DECILES, function (p) { return "D" + p / 10; });
+    lineChart("c4", "#ch4", PERCENTILES, function (p) { return "P" + p; });
   }
 
   /* ---------- Tabel data mentah ---------- */
@@ -260,7 +294,7 @@
   var saved = null; try { saved = localStorage.getItem("theme"); } catch (e) {}
   applyTheme(saved === "light" ? "light" : "dark");
 
-  function renderAll() { renderChips(); renderKpis(); renderStatTable(); renderCharts(); renderTable(); }
+  function renderAll() { renderChips(); renderKpis(); renderStatTable(); renderDpTable(); renderCharts(); renderTable(); }
   renderAll();
 
   window.__stats = { stats: stats, pct: pct, valuesOf: valuesOf, groups: groups };
