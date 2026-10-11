@@ -100,3 +100,4 @@ input[type=search]{flex:1;min-width:200px}
   .card,.kpi{break-inside:avoid}
   section{margin:16px 0}
 }
+#ringkasan-statistik > .card{margin-bottom:16px}
