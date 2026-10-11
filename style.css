@@ -101,3 +101,4 @@ input[type=search]{flex:1;min-width:200px}
   section{margin:16px 0}
 }
 #ringkasan-statistik > .card{margin-bottom:16px}
+.errbox{background:#7f1d1d;color:#fff;padding:10px 16px;font-size:.9rem;text-align:center}
