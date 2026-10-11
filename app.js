@@ -294,7 +294,7 @@
   var saved = null; try { saved = localStorage.getItem("theme"); } catch (e) {}
   applyTheme(saved === "light" ? "light" : "dark");
 
-  function renderAll() { renderChips(); renderKpis(); renderStatTable(); renderDpTable(); renderCharts(); renderTable(); }
+  function renderAll() { renderChips(); renderKpis(); renderStatTable();  renderDpTable(); renderCharts(); renderTable(); }
   renderAll();
 
   window.__stats = { stats: stats, pct: pct, valuesOf: valuesOf, groups: groups };
