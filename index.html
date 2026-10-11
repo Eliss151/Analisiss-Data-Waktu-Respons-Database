@@ -7,15 +7,15 @@
   <meta name="description" content="Dashboard analisis statistik deskriptif tugas Statistika.">
   <style>
 :root{
-  --bg:#0d1117; --panel:#161b22; --panel2:#1c232c; --line:#2d3540;
-  --text:#e6edf3; --muted:#9aa7b4; --accent:#58a6ff; --accent-ink:#0d1117;
+  --bg:#12142b; --panel:#1c1f3d; --panel2:#262a52; --line:#343a6b;
+  --text:#f1f3ff; --muted:#aab0dd; --accent:#7cc4ff; --accent-ink:#10122a;
   --c1:#2f81f7; --c2:#2da44e; --c3:#d97706;
   --grid:rgba(255,255,255,.08);
   --radius:12px;
 }
 :root[data-theme="light"]{
-  --bg:#f6f8fa; --panel:#ffffff; --panel2:#f0f3f6; --line:#d0d7de;
-  --text:#1f2328; --muted:#59636e; --accent:#0969da; --accent-ink:#ffffff;
+  --bg:#fff8f0; --panel:#ffffff; --panel2:#fff1e0; --line:#f3d9bd;
+  --text:#2b2640; --muted:#6b6785; --accent:#7c3aed; --accent-ink:#ffffff;
   --grid:rgba(0,0,0,.08);
 }
 *{box-sizing:border-box}
@@ -111,6 +111,36 @@ input[type=search]{flex:1;min-width:200px}
 #ringkasan-statistik > .card{margin-bottom:16px}
 .errbox{background:#7f1d1d;color:#fff;padding:10px 16px;font-size:.9rem;text-align:center}
 
+/* ===== Tema ceria ===== */
+:root{--radius:18px}
+body{background:radial-gradient(1000px 500px at 10% -5%,rgba(59,130,246,.18),transparent 60%),
+  radial-gradient(900px 500px at 95% 0%,rgba(236,72,153,.16),transparent 60%),
+  radial-gradient(900px 600px at 50% 100%,rgba(245,158,11,.16),transparent 60%),var(--bg);background-attachment:fixed}
+.topbar{border-bottom:3px solid transparent;border-image:linear-gradient(90deg,#3b82f6,#10b981,#f59e0b,#ec4899,#8b5cf6) 1}
+.hero{padding:34px 28px;margin-top:20px;border-radius:24px;color:#fff;
+  background:linear-gradient(120deg,#3b82f6 0%,#8b5cf6 50%,#ec4899 100%);box-shadow:0 12px 30px rgba(139,92,246,.35)}
+.hero h1,.hero .authors{color:#fff}
+.hero .eyebrow{color:#ffe9a8}
+.hero .authors{opacity:.92}
+.card{box-shadow:0 6px 18px rgba(80,60,140,.10);border-top:5px solid #3b82f6}
+#ringkasan-temuan.card{border-top-color:#f59e0b}
+#kesimpulan.card{border-top-color:#10b981}
+#sumber.card{border-top-color:#8b5cf6}
+.grid2 > .card:nth-child(1){border-top-color:#3b82f6}
+.grid2 > .card:nth-child(2){border-top-color:#ec4899}
+.kpi{box-shadow:0 6px 16px rgba(80,60,140,.10);border-left-width:8px;transition:transform .15s}
+.kpi:hover{transform:translateY(-3px)}
+.kpi .v{font-size:1.7rem}
+.chip{border-width:2px;font-weight:600;transition:transform .12s}
+.chip:hover{transform:translateY(-2px)}
+.btn{border-radius:999px}
+.btn-primary{background:linear-gradient(90deg,#3b82f6,#8b5cf6);border:none;color:#fff}
+.eyebrow{letter-spacing:.1em}
+h2{font-weight:800}
+thead th{background:var(--panel2)}
+tbody tr:nth-child(even){background:color-mix(in srgb,var(--panel2) 55%,transparent)}
+.errbox{border-radius:0}
+
 </style>
 </head>
 <body>
@@ -143,13 +173,13 @@ input[type=search]{flex:1;min-width:200px}
     </section>
 
     <section id="ringkasan-temuan" class="card">
-      <h2>Ringkasan temuan</h2>
+      <h2>✨ Ringkasan temuan</h2>
       <ul id="temuan" class="list"></ul>
     </section>
 
     <section id="ringkasan-statistik">
       <div class="head-row">
-        <h2>Ringkasan statistik</h2>
+        <h2>📊 Ringkasan statistik</h2>
         <div class="filter-box">
           <span id="filterInfo" class="muted">Semua kelompok</span>
           <button type="button" id="btnClear" class="btn btn-small" hidden>Hapus filter</button>
@@ -190,27 +220,40 @@ input[type=search]{flex:1;min-width:200px}
         <p class="muted small">Desil dan persentil memakai interpolasi linear: posisi = 1 + (n − 1) × p (setara PERCENTILE.INC di Excel). Simpangan baku adalah simpangan baku sampel (n − 1).</p>
       </div>
 
+      <div class="grid2">
+        <figure class="card">
+          <figcaption>Total waktu respons per DBMS (lebih pendek = lebih cepat)</figcaption>
+          <div class="chart-box"><canvas id="ch5" role="img" aria-label="Diagram total waktu respons"></canvas></div>
+        </figure>
+        <figure class="card">
+          <figcaption>Berapa kali lebih lambat dari yang tercepat, per skenario</figcaption>
+          <div class="chart-box"><canvas id="ch6" role="img" aria-label="Diagram kali lipat dari tercepat"></canvas></div>
+          <p class="muted small">Tinggi 1× berarti DBMS itu tercepat pada skenario tersebut.</p>
+        </figure>
+      </div>
+
       <div class="card">
-        <h3>Tabel desil dan persentil</h3>
+        <h3>Tabel perbandingan per skenario</h3>
         <div class="table-wrap">
           <table id="dpTable"></table>
         </div>
+        <p class="muted small">Angka biru tebal = nilai terkecil (tercepat) pada tiap baris. Total adalah jumlah keenam skenario.</p>
       </div>
     </section>
 
     <section id="kesimpulan" class="card">
-      <h2>Kesimpulan</h2>
+      <h2>🎯 Kesimpulan</h2>
       <ul id="kesimpulanList" class="list"></ul>
     </section>
 
     <section id="sumber" class="card">
-      <h2>Sumber Data</h2>
+      <h2>📚 Sumber Data</h2>
       <dl id="sumberDl" class="dl"></dl>
       <ul id="catatan" class="list muted"></ul>
     </section>
 
     <section id="data-mentah">
-      <h2>Data mentah</h2>
+      <h2>🗂️ Data mentah</h2>
       <div class="toolbar">
         <input type="search" id="q" placeholder="Cari kategori atau kelompok…" aria-label="Cari">
         <select id="selKelompok" aria-label="Filter kelompok"></select>
@@ -353,7 +396,7 @@ window.DATA = [
   var C = window.CONFIG, D = window.DATA;
   var NOOP = { textContent: "", innerHTML: "", hidden: false, style: {}, addEventListener: function () {}, setAttribute: function () {}, getAttribute: function () { return null; } };
   var $ = function (s) { return document.querySelector(s) || NOOP; };
-  var PALETTE = ["#2f81f7", "#2da44e", "#d97706", "#a371f7", "#db61a2", "#1b9aaa"];
+  var PALETTE = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6", "#06b6d4"];
   var fmt = function (n, d) {
     return Number(n).toLocaleString("id-ID", { maximumFractionDigits: d == null ? 2 : d });
   };
@@ -497,14 +540,26 @@ window.DATA = [
 
   function renderDpTable() {
     var gs = activeGroups();
-    var head = "<thead><tr><th>Ukuran</th>" + gs.map(function (g) { return '<th class="num">' + esc(g) + "</th>"; }).join("") + "</tr></thead><tbody>";
+    function val(g, c) { var r = D.filter(function (x) { return x.kelompok === g && x.kategori === c; })[0]; return r ? r.nilai : null; }
+    var head = "<thead><tr><th>" + esc(C.labelKategori || "Kategori") + "</th>" + gs.map(function (g) { return '<th class="num">' + esc(g) + "</th>"; }).join("") + "<th>Tercepat</th></tr></thead><tbody>";
     var body = "";
-    DECILES.forEach(function (p) {
-      body += "<tr><td>Desil " + p / 10 + " (D" + p / 10 + ")</td>" + gs.map(function (g) { return '<td class="num">' + fmt(pct(valuesOf(g), p / 100)) + "</td>"; }).join("") + "</tr>";
+    cats.forEach(function (c) {
+      var vs = gs.map(function (g) { return val(g, c); });
+      var min = Math.min.apply(null, vs.filter(function (v) { return v !== null; }));
+      var best = gs.filter(function (g, i) { return vs[i] === min; }).join(", ");
+      body += "<tr><td>" + esc(c) + "</td>" + vs.map(function (v) {
+        return '<td class="num"' + (v === min ? ' style="font-weight:700;color:var(--accent)"' : "") + ">" + (v === null ? "-" : fmt(v)) + "</td>";
+      }).join("") + "<td>" + esc(best) + "</td></tr>";
     });
-    PERCENTILES.forEach(function (p) {
-      body += "<tr><td>Persentil " + p + " (P" + p + ")</td>" + gs.map(function (g) { return '<td class="num">' + fmt(pct(valuesOf(g), p / 100)) + "</td>"; }).join("") + "</tr>";
-    });
+    var tot = gs.map(function (g) { return valuesOf(g).reduce(function (p, q) { return p + q; }, 0); });
+    var tmin = Math.min.apply(null, tot);
+    body += '<tr style="font-weight:700"><td>Total</td>' + tot.map(function (v) {
+      return '<td class="num"' + (v === tmin ? ' style="color:var(--accent)"' : "") + ">" + fmt(v) + "</td>";
+    }).join("") + "<td>" + esc(gs.filter(function (g, i) { return tot[i] === tmin; }).join(", ")) + "</td></tr>";
+    var order = gs.map(function (g, i) { return { g: g, t: tot[i] }; }).sort(function (x, y) { return x.t - y.t; });
+    body += "<tr><td>Peringkat (total terkecil = 1)</td>" + gs.map(function (g) {
+      for (var k = 0; k < order.length; k++) if (order[k].g === g) return '<td class="num">' + (k + 1) + "</td>";
+    }).join("") + "<td></td></tr>";
     $("#dpTable").innerHTML = head + body + "</tbody>";
   }
 
@@ -549,7 +604,7 @@ window.DATA = [
       data: {
         labels: cats,
         datasets: gs.map(function (g) {
-          return { label: g, backgroundColor: colorOf[g], borderRadius: 3,
+          return { label: g, backgroundColor: colorOf[g], borderRadius: 6,
             data: cats.map(function (c) {
               var r = D.filter(function (x) { return x.kelompok === g && x.kategori === c; })[0];
               return r ? r.nilai : null;
@@ -565,8 +620,8 @@ window.DATA = [
       data: {
         labels: gs,
         datasets: [
-          { label: "Mean", backgroundColor: css("--accent"), borderRadius: 3, data: st.map(function (s) { return s.mean; }) },
-          { label: "Median", backgroundColor: "#8b949e", borderRadius: 3, data: st.map(function (s) { return s.median; }) }
+          { label: "Mean", backgroundColor: css("--accent"), borderRadius: 6, data: st.map(function (s) { return s.mean; }) },
+          { label: "Median", backgroundColor: "#f59e0b", borderRadius: 6, data: st.map(function (s) { return s.median; }) }
         ]
       },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: legend, tooltip: tip }, scales: axes(C.labelNilai + " (" + C.satuan + ")", false) }
@@ -585,6 +640,33 @@ window.DATA = [
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: legend, tooltip: tip }, scales: axes(C.labelNilai + " (" + C.satuan + ")", !!C.skalaLog) }
       });
     }
+
+    var totals = gs.map(function (g) { return valuesOf(g).reduce(function (p, q) { return p + q; }, 0); });
+    mk("c5", "#ch5", {
+      type: "bar",
+      data: { labels: gs, datasets: [{ label: "Total", data: totals, borderRadius: 10,
+        backgroundColor: gs.map(function (g) { return colorOf[g]; }) }] },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: "y",
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (c) { return "Total: " + fmt(c.parsed.x) + " " + C.satuan; } } } },
+        scales: { x: { beginAtZero: true, grid: { color: grid }, ticks: { color: muted, callback: function (v) { return fmt(v, 0); } }, title: { display: true, text: "Total " + C.labelNilai.toLowerCase() + " (" + C.satuan + ")", color: muted } },
+                  y: { grid: { display: false }, ticks: { color: text, font: { weight: "600" } } } } }
+    });
+    var mins = cats.map(function (c) {
+      return Math.min.apply(null, gs.map(function (g) { var r = D.filter(function (x) { return x.kelompok === g && x.kategori === c; })[0]; return r ? r.nilai : Infinity; }));
+    });
+    mk("c6", "#ch6", {
+      type: "bar",
+      data: { labels: cats, datasets: gs.map(function (g) {
+        return { label: g, backgroundColor: colorOf[g], borderRadius: 6,
+          data: cats.map(function (c, i) { var r = D.filter(function (x) { return x.kelompok === g && x.kategori === c; })[0]; return r ? r.nilai / mins[i] : null; }) };
+      }) },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: legend, tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": " + fmt(c.parsed.y, 1) + "\u00d7 dari yang tercepat"; } } } },
+        scales: { x: { grid: { display: false }, ticks: { color: muted } },
+                  y: { type: "logarithmic", min: 0.5, grid: { color: grid },
+                       ticks: { color: muted, callback: function (v) { var m = v / Math.pow(10, Math.floor(Math.log10(v))); return (m === 1 || m === 2 || m === 5) ? fmt(v, 0) + "\u00d7" : ""; } },
+                       title: { display: true, text: "Kali lipat dari yang tercepat (1\u00d7 = tercepat)", color: muted } } } }
+    });
     lineChart("c3", "#ch3", DECILES, function (p) { return "D" + p / 10; });
     lineChart("c4", "#ch4", PERCENTILES, function (p) { return "P" + p; });
   }
@@ -653,7 +735,7 @@ window.DATA = [
     renderCharts();
   });
   var saved = null; try { saved = localStorage.getItem("theme"); } catch (e) {}
-  applyTheme(saved === "light" ? "light" : "dark");
+  applyTheme(saved === "dark" ? "dark" : "light");
 
   function renderAll() { renderChips(); renderKpis(); renderStatTable(); renderDpTable(); renderCharts(); renderTable(); }
   renderAll();
