@@ -1,7 +1,8 @@
 (function () {
   "use strict";
   var C = window.CONFIG, D = window.DATA;
-  var $ = function (s) { return document.querySelector(s); };
+  var NOOP = { textContent: "", innerHTML: "", hidden: false, style: {}, addEventListener: function () {}, setAttribute: function () {}, getAttribute: function () { return null; } };
+  var $ = function (s) { return document.querySelector(s) || NOOP; };
   var PALETTE = ["#2f81f7", "#2da44e", "#d97706", "#a371f7", "#db61a2", "#1b9aaa"];
   var fmt = function (n, d) {
     return Number(n).toLocaleString("id-ID", { maximumFractionDigits: d == null ? 2 : d });
@@ -163,7 +164,20 @@
     var lo = Math.min.apply(null, D.map(function (r) { return r.nilai; }));
     return Math.pow(10, Math.floor(Math.log10(Math.max(lo, 1))));
   }
+  function showError(msg) {
+    var b = document.getElementById("errBox");
+    if (b) { b.hidden = false; b.textContent = msg; }
+  }
+  function mk(key, sel, cfg) {
+    var el = document.querySelector(sel); if (!el) return;
+    if (charts[key]) charts[key].destroy();
+    charts[key] = new Chart(el, cfg);
+  }
   function renderCharts() {
+    if (typeof Chart === "undefined") {
+      showError("Pustaka grafik (chart.umd.js) tidak ditemukan di repository. Unggah file chart.umd.js ke folder yang sama dengan index.html.");
+      return;
+    }
     var text = css("--text"), muted = css("--muted"), grid = css("--grid"), gs = activeGroups();
     Chart.defaults.font.family = "system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif";
     Chart.defaults.color = muted;
@@ -180,8 +194,7 @@
     var tip = { callbacks: { label: function (c) { return c.dataset.label + ": " + fmt(c.parsed.y) + " " + C.satuan; } } };
     var legend = { position: "bottom", labels: { color: text, boxWidth: 12 } };
 
-    if (charts.c1) charts.c1.destroy();
-    charts.c1 = new Chart($("#ch1"), {
+    mk("c1", "#ch1", {
       type: "bar",
       data: {
         labels: cats,
@@ -196,9 +209,8 @@
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: legend, tooltip: tip }, scales: axes(C.labelNilai + " (" + C.satuan + ")", !!C.skalaLog) }
     });
 
-    if (charts.c2) charts.c2.destroy();
     var st = gs.map(function (g) { return stats(valuesOf(g)); });
-    charts.c2 = new Chart($("#ch2"), {
+    mk("c2", "#ch2", {
       type: "bar",
       data: {
         labels: gs,
@@ -211,8 +223,7 @@
     });
 
     function lineChart(key, canvas, ps, label) {
-      if (charts[key]) charts[key].destroy();
-      charts[key] = new Chart($(canvas), {
+      mk(key, canvas, {
         type: "line",
         data: {
           labels: ps.map(label),
@@ -294,7 +305,7 @@
   var saved = null; try { saved = localStorage.getItem("theme"); } catch (e) {}
   applyTheme(saved === "light" ? "light" : "dark");
 
-  function renderAll() { renderChips(); renderKpis(); renderStatTable();  renderDpTable(); renderCharts(); renderTable(); }
+  function renderAll() { renderChips(); renderKpis(); renderStatTable(); renderDpTable(); renderCharts(); renderTable(); }
   renderAll();
 
   window.__stats = { stats: stats, pct: pct, valuesOf: valuesOf, groups: groups };
