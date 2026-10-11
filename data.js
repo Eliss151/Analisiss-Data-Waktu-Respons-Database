@@ -1,10 +1,16 @@
+/* =====================================================================
+   FILE INI SATU-SATUNYA YANG PERLU KAMU EDIT.
+   Ganti isi CONFIG (judul, nama, teks) dan DATA (angka) dengan milikmu.
+   Jangan hapus tanda kutip, koma, atau kurung kurawal.
+   ===================================================================== */
+
 window.CONFIG = {
   // ---------- Identitas ----------
   judul: "Analisis Data Waktu Respons Query MySQL, PostgreSQL, dan MongoDB",
   mataKuliah: "Tugas Statistika",
   breadcrumb: "DATALAB / Waktu Respons Database",
   penulis: [
-    "Muhammad Farisi Rasyidi (250602043)" ,
+    "Muhammad Farisi Rasyidi (250602043)",
     "Elisa Indah R (250602061)"
   ],
 
